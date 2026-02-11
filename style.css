@@ -1,0 +1,128 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background-color: #f4f4f4;
+}
+
+header {
+  background-image:
+    url('./assets/unyleya-editora-e-cursos-s-a_f.png'),
+    linear-gradient(135deg, #a74561 0%, #864757 100%);
+  background-repeat: no-repeat;
+  background-position:
+    center left 20px,
+    center;
+  background-size: contain, cover;
+  color: rgb(206, 194, 194);
+  text-align: center;
+  padding: 3rem 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 10px rgba(112, 39, 60, 0.3);
+}
+
+header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+header p {
+  font-size: 1.1rem;
+}
+
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+section {
+  background: white;
+  margin-bottom: 2rem;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-top: 4px solid #70273c;
+}
+
+section h2 {
+  font-size: 1.5rem;
+  color: #70273c;
+}
+
+#catalogo {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+#catalog:hover {
+  color: #70273c;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+input {
+    width: 100%;
+    max-width: 250px;
+    padding: 0.75rem;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+input:focus {
+    border-color: #70273c;
+    box-shadow: 0 0 0 3px rgba(112, 39, 60, 0.1);
+}
+
+button {
+    background: linear-gradient(135deg, #70273c 0%, #864757 100%);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(112, 39, 60, 0.3);
+}
+
+
+button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(112, 39, 60, 0.4);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+#resultado {
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 5px;
+    font-weight: bold;
+    background: linear-gradient(135deg, rgba(112, 39, 60, 0.1) 0%, rgba(134, 71, 87, 0.1) 100%);
+    color: #70273c;
+    border: 1px solid #864757;
+}
+
+#resultadoCep {
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 5px;
+    background: #f8f9fa;
+    border: 1px solid #864757;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    color: #70273c;
+}
