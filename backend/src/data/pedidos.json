@@ -1,0 +1,40 @@
+[
+  {
+    "id": "6be682e0-cd93-4ce5-8818-4392897ae136",
+    "produtos": [
+      {
+        "produto": {
+          "id": "f1084e56-5808-4102-9fc5-113b847c63aa",
+          "nome": "Notebook",
+          "preco": 3500,
+          "categoria": "Eletrônicos",
+          "quantidade": 7,
+          "img": "assets/notebook.png"
+        },
+        "quantidade": 1
+      }
+    ],
+    "status": "pendente",
+    "total": 3500,
+    "dataCriacao": "2026-03-01T20:02:13.034Z"
+  },
+  {
+    "id": "06667ee9-803f-46c2-ae48-831cab859af0",
+    "produtos": [
+      {
+        "produto": {
+          "id": "f1084e56-5808-4102-9fc5-113b847c63aa",
+          "nome": "Notebook",
+          "preco": 3500,
+          "categoria": "Eletrônicos",
+          "quantidade": 0,
+          "img": "assets/notebook.png"
+        },
+        "quantidade": 7
+      }
+    ],
+    "status": "pendente",
+    "total": 24500,
+    "dataCriacao": "2026-03-03T19:01:06.520Z"
+  }
+]

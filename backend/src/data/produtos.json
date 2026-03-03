@@ -1,0 +1,82 @@
+[
+  {
+    "id": "f1084e56-5808-4102-9fc5-113b847c63aa",
+    "nome": "Notebook",
+    "preco": 3500,
+    "categoria": "Eletrônicos",
+    "quantidade": 0,
+    "img": "assets/notebook.png"
+  },
+  {
+    "id": "851c3b10-f727-4b78-a6eb-726d48e66889",
+    "nome": "Smartphone",
+    "preco": 2200,
+    "categoria": "Eletrônicos",
+    "quantidade": 25,
+    "img": "assets/smartphone.png"
+  },
+  {
+    "id": "31e2f155-11f3-44d9-bce7-2f40cf345835",
+    "nome": "Monitor 24\"",
+    "preco": 1100,
+    "categoria": "Eletrônicos",
+    "quantidade": 15,
+    "img": "assets/monitor.png"
+  },
+  {
+    "id": "2f9f6c8e-478e-4e40-8227-6ddb58d47e64",
+    "nome": "Cadeira",
+    "preco": 800,
+    "categoria": "Móveis",
+    "quantidade": 15,
+    "img": "assets/cadeira.png"
+  },
+  {
+    "id": "6e69309a-683f-4e85-8b67-7095dee91dae",
+    "nome": "Teclado Mecânico",
+    "preco": 350,
+    "categoria": "Eletrônicos",
+    "quantidade": 30,
+    "img": "assets/teclado.png"
+  },
+  {
+    "id": "dfa84b5a-a5b3-463a-b62e-6e5ea7435567",
+    "nome": "Mouse Gamer",
+    "preco": 280,
+    "categoria": "Eletrônicos",
+    "quantidade": 40,
+    "img": "assets/mouse.png"
+  },
+  {
+    "id": "9af72602-9c46-4699-801a-d564456c5517",
+    "nome": "Headset",
+    "preco": 450,
+    "categoria": "Eletrônicos",
+    "quantidade": 20,
+    "img": "assets/headset.png"
+  },
+  {
+    "id": "6b347649-152e-4b8b-b2ab-cc285160a994",
+    "nome": "Webcam Full HD",
+    "preco": 320,
+    "categoria": "Eletrônicos",
+    "quantidade": 18,
+    "img": "assets/webcam.png"
+  },
+  {
+    "id": "bd85e88d-b9f0-4199-8ffa-697cdd3e68ba",
+    "nome": "Teste",
+    "preco": 2000,
+    "categoria": "TesteCategoria",
+    "quantidade": 40,
+    "img": null
+  },
+  {
+    "id": "8d60a214-a9fa-4a79-9b2a-e54fab9c3cf2",
+    "nome": "teste1",
+    "preco": 2000,
+    "categoria": "testecategoria",
+    "quantidade": 10,
+    "img": null
+  }
+]

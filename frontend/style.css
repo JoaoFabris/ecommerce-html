@@ -69,6 +69,15 @@ section h2 {
   font-weight: bold;
 }
 
+.card-produto.selecionado {
+  outline: 2px solid #333;
+  border-radius: 8px;
+  padding: 8px;
+ box-shadow: 2px 2px 5px rgba(0,0.7,0.7,0.7);
+  color: #ddd;
+  background-color:#70273c;
+}
+
 input {
     width: 100%;
     max-width: 250px;
@@ -106,6 +115,31 @@ button:active {
     transform: translateY(0);
 }
 
+
+#btnVerPedidos {
+  margin-top: 15px;
+  background: linear-gradient(135deg, #ffffff 0%, #f3f3f3 100%);
+  color: #70273c;
+  border: 2px solid #ffffff;
+  padding: 0.8rem 2rem;
+  border-radius: 30px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+#btnVerPedidos:hover {
+  background: #70273c;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+}
+
+#btnVerPedidos:active {
+  transform: scale(0.98);
+}
+
 #resultado {
     margin-top: 1rem;
     padding: 1rem;
@@ -125,4 +159,8 @@ button:active {
     font-family: 'Courier New', monospace;
     font-size: 0.9rem;
     color: #70273c;
+}
+
+#secPedidos {
+  display: none;
 }
