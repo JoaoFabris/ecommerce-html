@@ -1,1 +1,15 @@
 aplicar a logica de desconto no produto e o cep e gerar o total do pedido
+
+
+
+
+
+Produtos
+
+server.js → produtoRoutes → produtoController → produtoService
+
+Pedidos
+
+server.js → pedidoRoutes → pedidoController → pedidoService
+
+CEP

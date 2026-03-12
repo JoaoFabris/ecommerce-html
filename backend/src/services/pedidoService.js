@@ -17,16 +17,16 @@ class PedidoService {
     fs.writeFileSync(ARQUIVO, JSON.stringify(this.pedidos, null, 2), 'utf-8');
   }
 
-  listaTodosOsPedidos(){
-    return this.pedidos
+  listaTodosOsPedidos() {
+    return this.pedidos;
   }
 
   limparTodosOsPedidos() {
-  this.pedidos = [];
-  this.salvarJSON(); 
-}
+    this.pedidos = [];
+    this.salvarJSON();
+  }
 
-  criar(dadosProduto, quantidade) {
+  criar(dadosProduto, quantidade, endereco, frete) {
     const produtoService = new ProdutoService();
     const produtoReal = produtoService.buscarPorId(dadosProduto.id);
 
@@ -36,16 +36,47 @@ class PedidoService {
       );
     }
 
-    // usa produtoReal diretamente — já é instância de Produto
     const itens = [{ produto: produtoReal, quantidade }];
-    const pedido = new Pedido(itens);
+    const pedido = new Pedido(itens, endereco, frete); // ← passa para o model
 
-    // desconta o estoque e salva
     produtoReal.quantidade -= quantidade;
     produtoService.salvarJSON();
 
     this.pedidos.push(pedido);
     this.salvarJSON();
+    return pedido;
+  }
+
+  buscarPorId(id) {
+    return this.pedidos.find((p) => p.id === id);
+  }
+
+  deletar(id) {
+    const index = this.pedidos.findIndex((p) => p.id === id);
+
+    if (index === -1) {
+      throw new Error('Pedido não encontrado');
+    }
+
+    const removido = this.pedidos.splice(index, 1)[0];
+    this.salvarJSON();
+
+    return removido;
+  }
+
+  atualizar(id, dados) {
+    const pedido = this.buscarPorId(id);
+
+    if (!pedido) {
+      throw new Error('Pedido não encontrado');
+    }
+
+    if (dados.status) {
+      pedido.status = dados.status;
+    }
+
+    this.salvarJSON();
+
     return pedido;
   }
 }

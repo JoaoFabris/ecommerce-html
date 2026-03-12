@@ -1,6 +1,7 @@
 const prompt = require('prompt-sync')();
 const ProdutoService = require('../services/produtoService');
 const PedidoService = require('../services/pedidoService');
+const e = require('express');
 
 const produtoService = new ProdutoService();
 const pedidoService = new PedidoService();
@@ -12,6 +13,8 @@ async function menu() {
   console.log('3 - Média de Preços');
   console.log('4 - Criar Pedido');
   console.log('5 - Listar Pedidos');
+  console.log('6 - Buscar produto pelo id');
+  console.log('7 - Atualizar Produto');
   console.log('0 - Sair');
 
   const opcao = prompt('Escolha uma opção: ');
@@ -37,6 +40,13 @@ async function menu() {
       listarPedidos();
       break;
 
+    case '6':
+      buscarProdutoId();
+      break;
+    case '7':
+      atualizarProduto();
+      break;
+
     case '0':
       console.log('Encerrando...');
       return;
@@ -55,7 +65,15 @@ function cadastrarProduto() {
     const categoria = prompt('Categoria: ');
     const quantidade = Number(prompt('Quantidade em estoque: '));
 
-    produtoService.criar(nome, preco, categoria, quantidade);
+    // O usuário pode apenas apertar Enter ou cancelar
+    let img = prompt('Nome do arquivo da img (Deixe em branco para pular):');
+
+    // Se ele cancelar (null) ou deixar vazio (""), definimos como null ou string vazia
+    if (!img) {
+      img = 'sem-foto.jpg'; // Ou null, dependendo de como seu banco de dados aceita
+    }
+
+    produtoService.criar(nome, preco, categoria, quantidade, img);
 
     console.log('Produto cadastrado com sucesso!');
   } catch (e) {
@@ -63,9 +81,37 @@ function cadastrarProduto() {
   }
 }
 
+function atualizarProduto() {
+  try {
+    console.log(listarProdutos());
+
+    const id = prompt('Digite o id produto para atualizar: ');
+    const nome = prompt('Deseja mudar o nome do Produto: ');
+    const categoria = prompt('Qual a categoria: ');
+    const preco = Number(prompt('Deseja mudar o preço do Produto: '));
+    const quantidade = Number(prompt('Deseja mudar o quantidade do Produto: '));
+    let img = prompt('Nome do arquivo da img (Deixe em branco para pular):');
+
+    
+    if (!img) {
+      img = 'sem-foto.jpg';
+    }
+    produtoService.atualizarProduto(id, nome, preco, categoria ,quantidade, img);
+    console.log('Produto atualizado com sucesso');
+  } catch (e) {
+    console.log('error', e.message);
+  }
+}
+
 function listarProdutos() {
   const produtos = produtoService.listarTodos();
   console.table(produtos);
+}
+
+function buscarProdutoId() {
+  const id = prompt('Digite o id do produto: ');
+  const produto = produtoService.buscarPorId(id);
+  console.log(produto);
 }
 
 function calcularMedia() {
@@ -107,7 +153,7 @@ function listarPedidos() {
     data: new Date(p.dataCriacao).toLocaleString('pt-BR'),
     itens: (p.produtos || [])
       .map((i) => `${i.quantidade}x ${i.produto?.nome ?? 'Produto'}`)
-      .join(' | ')
+      .join(' | '),
   }));
 
   console.table(resumo);

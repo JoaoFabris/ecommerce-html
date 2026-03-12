@@ -64,19 +64,11 @@
     "img": "assets/webcam.png"
   },
   {
-    "id": "bd85e88d-b9f0-4199-8ffa-697cdd3e68ba",
-    "nome": "Teste",
-    "preco": 2000,
-    "categoria": "TesteCategoria",
-    "quantidade": 40,
-    "img": null
-  },
-  {
-    "id": "8d60a214-a9fa-4a79-9b2a-e54fab9c3cf2",
-    "nome": "teste1",
-    "preco": 2000,
-    "categoria": "testecategoria",
+    "id": "16aa9fdb-bb9b-4806-989e-7122be68fa4d",
+    "nome": "GPU",
+    "preco": 7500,
+    "categoria": "Hardware",
     "quantidade": 10,
-    "img": null
+    "img": "assets/gpu.png"
   }
 ]

@@ -2,24 +2,23 @@
   "name": "atividade1",
   "version": "1.0.0",
   "description": "Contexto",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "cli": "node backend/src/cli/cli.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/JoaoFabris/ecommerce-html.git"
   },
-  "keywords": [],
-  "author": "",
   "license": "ISC",
   "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/JoaoFabris/ecommerce-html/issues"
-  },
-  "homepage": "https://github.com/JoaoFabris/ecommerce-html#readme",
   "dependencies": {
     "express": "^5.2.1",
     "prompt-sync": "^4.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
   }
 }

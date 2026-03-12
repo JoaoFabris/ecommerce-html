@@ -1,3 +1,4 @@
+//regra do negocio
 const { randomUUID } = require('crypto');
 
 class Produto {
