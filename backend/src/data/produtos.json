@@ -68,7 +68,7 @@
     "nome": "GPU",
     "preco": 7500,
     "categoria": "Hardware",
-    "quantidade": 10,
+    "quantidade": 9,
     "img": "assets/gpu.png"
   }
 ]

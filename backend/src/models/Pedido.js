@@ -5,7 +5,6 @@ const STATUS_VALIDOS = ['pendente', 'enviado', 'entregue'];
 
 class Pedido {
   constructor(produtos, endereco = null, frete = 0) {
-    // ← adiciona os dois parâmetros
     this.validarProdutos(produtos);
     this.id = randomUUID();
     this.produtos = produtos;

@@ -11,10 +11,12 @@ Esta aplicação foi desenvolvida como parte de um sistema de gestão de vendas,
 Desenvolver um sistema de vendas completo, incluindo:
 
 - Catálogo de produtos com controle de estoque
+- CRUD completo de produtos e pedidos
 - Cálculo de descontos e frete por estado
 - Consulta de endereço via API de CEP
 - Criação e listagem de pedidos
 - Persistência de dados em arquivos JSON
+- Arquitetura MVC com Node.js + Express
 - Programação Orientada a Objetos (POO)
 - Operações assíncronas com Async/Await
 
@@ -24,30 +26,36 @@ Desenvolver um sistema de vendas completo, incluindo:
 
 ```
 atividade1/
+├── app.js                      # Entry point — configura Express e rotas
 ├── frontend/
-│   ├── index.html       # Estrutura da aplicação
-│   ├── style.css        # Estilização da interface
-│   ├── script.js        # Lógica do front-end
-│   └── assets/          # Imagens dos produtos
+│   ├── index.html              # Estrutura da aplicação
+│   ├── style.css               # Estilização da interface
+│   ├── script.js               # Lógica do front-end
+│   └── assets/                 # Imagens dos produtos
 ├── backend/
 │   └── src/
-│       ├── models/
+│       ├── routes/             # Mapeamento de endpoints
+│       │   ├── produtoRoutes.js
+│       │   └── pedidoRoutes.js
+│       ├── controllers/        # Recebe req/res e delega ao service
+│       │   ├── produtoController.js
+│       │   └── pedidoController.js
+│       ├── services/           # Lógica de negócio
+│       │   ├── produtoService.js
+│       │   ├── pedidoService.js
+│       │   └── cepService.js
+│       ├── models/             # Classes e validações
 │       │   ├── Produto.js
 │       │   ├── Pedido.js
 │       │   ├── PedidoComDesconto.js
 │       │   └── Pessoa.js
-│       ├── services/
-│       │   ├── produtoService.js
-│       │   ├── pedidoService.js
-│       │   └── cepService.js
-│       ├── data/
+│       ├── data/               # Persistência em JSON
 │       │   ├── produtos.json
 │       │   └── pedidos.json
 │       ├── cli/
 │       │   └── cli.js
 │       └── tests/
 │           └── testProduto.js
-├── server.js            # Servidor Express
 ├── package.json
 └── README.md
 ```
@@ -77,7 +85,7 @@ npm install
 ### Iniciar o Servidor
 
 ```bash
-node server.js
+node app.js
 ```
 
 Acesse em: [http://localhost:3000](http://localhost:3000)
@@ -102,23 +110,25 @@ node backend/src/cli/cli.js
 
 - Exibição dinâmica do catálogo de produtos com imagens
 - Seleção de produto e quantidade
+- Cadastro de novos produtos pelo painel
+- Edição de produtos diretamente no card
+- Exclusão de produtos diretamente no card
 - Calculadora de desconto por percentual
 - Consulta de CEP via API externa
 - Cálculo de frete por estado
 - Resumo do pedido em tempo real
 - Criação de pedidos
 - Visualização de pedidos realizados
+- Alteração de status do pedido
+- Exclusão de pedidos
 
 ### Back-End (Node.js + Express)
 
-- API REST com as rotas:
-  - `GET /api/produtos` — lista todos os produtos
-  - `POST /api/pedidos` — cria um novo pedido
-  - `GET /api/pedidos` — lista todos os pedidos
-  - `GET /api/cep/:cep` — consulta endereço por CEP
+- API REST com CRUD completo de produtos e pedidos
 - Persistência de dados em arquivos JSON
 - Controle automático de estoque ao realizar pedidos
 - Validação de dados nas camadas model e service
+- Arquitetura MVC (Routes → Controllers → Services → Models)
 
 ### CLI (Terminal)
 
@@ -133,10 +143,101 @@ node backend/src/cli/cli.js
 
 ---
 
+## Endpoints da API
+
+### Produtos
+
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| `GET` | `/api/produtos` | Lista todos os produtos |
+| `POST` | `/api/produtos` | Cadastra novo produto |
+| `PUT` | `/api/produtos/:id` | Atualiza produto pelo ID |
+| `DELETE` | `/api/produtos/:id` | Remove produto pelo ID |
+
+### Pedidos
+
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| `GET` | `/api/pedidos` | Lista todos os pedidos |
+| `POST` | `/api/pedidos` | Cria novo pedido |
+| `PUT` | `/api/pedidos/:id` | Atualiza status do pedido |
+| `DELETE` | `/api/pedidos/:id` | Remove pedido pelo ID |
+
+### CEP
+
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| `GET` | `/api/cep/:cep` | Busca endereço pelo CEP via ViaCEP |
+
+---
+
+## Exemplos de Requisição / Resposta
+
+### POST `/api/produtos`
+
+**Requisição**
+```json
+{
+  "nome": "Caderno",
+  "preco": 29.90,
+  "categoria": "Papelaria",
+  "quantidade": 50,
+  "img": "assets/caderno.png"
+}
+```
+
+**Resposta 201**
+```json
+{
+  "id": "uuid-gerado",
+  "nome": "Caderno",
+  "preco": 29.90,
+  "categoria": "Papelaria",
+  "quantidade": 50
+}
+```
+
+### POST `/api/pedidos`
+
+**Requisição**
+```json
+{
+  "produto": { "id": "uuid-do-produto" },
+  "quantidade": 2,
+  "endereco": { "logradouro": "Rua X", "uf": "RJ" },
+  "frete": 15.00
+}
+```
+
+**Resposta 201**
+```json
+{
+  "id": "uuid-gerado",
+  "status": "pendente",
+  "total": 74.80,
+  "frete": 15.00,
+  "dataCriacao": "2026-03-12T..."
+}
+```
+
+### PUT `/api/pedidos/:id`
+
+**Requisição**
+```json
+{ "status": "enviado" }
+```
+
+**Resposta 200**
+```json
+{ "id": "uuid", "status": "enviado", "total": 74.80, "..." : "..." }
+```
+
+---
+
 ## Programação Orientada a Objetos
 
 | Classe | Descrição |
-|---|---|
+|--------|-----------|
 | `Produto` | Modelo base com validação de dados e cálculo de desconto |
 | `Pedido` | Criação de pedidos com validação de itens e cálculo de total |
 | `PedidoComDesconto` | Herda de `Pedido` e sobrescreve `calculadoraTotal()` aplicando desconto — **polimorfismo** |
