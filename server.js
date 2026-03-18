@@ -13,6 +13,7 @@ const produtoRoutes = require('./backend/src/routes/produtoRoutes');
 const pedidoRoutes = require('./backend/src/routes/pedidoRoutes');
 const userRoutes = require('./backend/src/routes/userRoutes');
 const categoriaRoutes = require('./backend/src/routes/categoriaRoutes');
+const carrinhoRoutes = require('./backend/src/routes/carrinhoRoutes');
 const { buscarCep } = require('./backend/src/services/cepService');
 
 const app = express();
@@ -30,6 +31,7 @@ app.get('/api', (req, res) => {
 app.use('/api/produtos', produtoRoutes);
 app.use('/api/pedidos', pedidoRoutes);
 app.use('/api/categorias', categoriaRoutes);
+app.use('/api/carrinho', carrinhoRoutes);
 app.use('/api/users', userRoutes);
 
 app.get('/api/cep/:cep', async (req, res) => {
