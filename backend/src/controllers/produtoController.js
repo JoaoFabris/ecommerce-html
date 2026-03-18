@@ -1,86 +1,52 @@
 //recebe a req e retorna o status code
 
 const ProdutoService = require('../services/produtoService');
+const service = new ProdutoService();
 
-function listar(req, res) {
+async function listar(req, res) {
   try {
-    const service = new ProdutoService();
-    const produtos = service.listarTodos();
-    res.json(produtos);
+    const { page, limit } = req.query;
+    const resultado = await service.listarTodos({ page: Number(page), limit: Number(limit) });
+    res.json(resultado);
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
 }
 
-function buscarPorId(req, res) {
+async function buscarPorId(req, res) {
   try {
-    const service = new ProdutoService();
-    const produto = service.buscarPorId(req.params.id);
-
-    if (!produto) {
-      return res.status(404).json({ error: 'Produto não encontrado' });
-    }
-
+    const produto = await service.buscarPorId(req.params.id);
     res.json(produto);
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    res.status(404).json({ error: e.message });
   }
 }
 
-function criar(req, res) {
+async function criar(req, res) {
   try {
-    const { nome, preco, categoria, quantidade, img } = req.body;
-
-    const service = new ProdutoService();
-    const produto = service.criar(nome, Number(preco), categoria, Number(quantidade), img);
-
+    const produto = await service.criar(req.body);
     res.status(201).json(produto);
   } catch (e) {
     res.status(400).json({ error: e.message });
   }
 }
 
-function atualizar(req, res) {
+async function atualizar(req, res) {
   try {
-    const { nome, preco, categoria, quantidade, img } = req.body;
-
-    const service = new ProdutoService();
-    service.atualizarProduto(
-      req.params.id,
-      nome,
-      preco ? Number(preco) : preco,
-      categoria,
-      quantidade ? Number(quantidade) : quantidade,
-      img
-    );
-
-    const produtoAtualizado = service.buscarPorId(req.params.id);
-    res.json(produtoAtualizado);
+    const produto = await service.atualizar(req.params.id, req.body);
+    res.json(produto);
   } catch (e) {
     res.status(400).json({ error: e.message });
   }
 }
 
-function deletar(req, res) {
+async function deletar(req, res) {
   try {
-    const service = new ProdutoService();
-    const produto = service.buscarPorId(req.params.id);
-
-    if (!produto) {
-      return res.status(404).json({ error: 'Produto não encontrado' });
-    }
-
-    service.deletar(req.params.id);
+    await service.deletar(req.params.id);
     res.json({ mensagem: 'Produto removido com sucesso' });
   } catch (e) {
     res.status(400).json({ error: e.message });
   }
 }
 
-module.exports = {
-  listar,
-  buscarPorId,
-  criar,
-  atualizar,
-  deletar,
-};
+module.exports = { listar, buscarPorId, criar, atualizar, deletar };

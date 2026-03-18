@@ -1,43 +1,31 @@
 //regra do negocio
-const { randomUUID } = require('crypto');
+const mongoose = require('mongoose');
 
-class Produto {
-  constructor(nome, preco, categoria, quantidade, img = null) {
-    this.#validarDados(nome, preco, categoria,  quantidade, img);
-    this.id = randomUUID();
-    this.nome = nome;
-    this.preco = preco;
-    this.categoria = categoria;
-    this.quantidade = quantidade;
-    this.img = img
-  }
+const produtoSchema = new mongoose.Schema({
+  nome: {
+    type: String,
+    required: [true, 'Nome é obrigatório'],
+    trim: true,
+  },
+  preco: {
+    type: Number,
+    required: [true, 'Preço é obrigatório'],
+    min: [0, 'Preço não pode ser negativo'],
+  },
+  categoria: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Categoria',
+    required: [true, 'Categoria é obrigatória'],
+  },
+  quantidade: {
+    type: Number,
+    required: [true, 'Quantidade é obrigatória'],
+    min: [0, 'Quantidade não pode ser negativa'],
+  },
+  img: {
+    type: String,
+    default: null,
+  },
+}, { timestamps: true });
 
-  #validarDados(nome, preco, categoria, quantidade, img) {
-    if (!nome || typeof nome !== 'string' || nome.trim().length <= 0) {
-      throw new Error('Erro na validação do nome');
-    }
-
-    if (typeof preco !== 'number' || preco <= 0) {
-      throw new Error('Erro na validação do preço');
-    }
-
-    if (!categoria || typeof categoria !== 'string' || categoria.trim().length <= 0) {
-      throw new Error('Erro na validação da categoria');
-    }
-
-    if (typeof quantidade !== 'number' || quantidade < 0) {
-      throw new Error('Erro na validação da quantidade');
-    }
-      if (img !== undefined && img !== null && typeof img !== 'string') {
-      throw new Error('Erro na validação da imagem');
-    }
-  }
-
-  calcularDesconto(percentual) {
-  if (percentual <= 0 || percentual > 100) throw new Error('Percentual inválido');
-  return parseFloat((this.preco * (1 - percentual / 100)).toFixed(2));
-}
-
-}
-
-module.exports = Produto;
+module.exports = mongoose.model('Produto', produtoSchema);
