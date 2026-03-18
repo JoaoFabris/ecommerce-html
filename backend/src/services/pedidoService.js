@@ -1,81 +1,69 @@
-const Pedido = require('../models/PedidoService'); 
-const fs = require('fs');
-const path = require('path');
-const ProdutoService = require('./produtoService');
-
-const ARQUIVO = path.join(__dirname, '../data/pedidos.json');
+const Pedido = require('../models/Pedido');
+const Produto = require('../models/Produto');
 
 class PedidoService {
-  constructor() {
-    this.pedidos = fs.existsSync(ARQUIVO)
-      ? JSON.parse(fs.readFileSync(ARQUIVO, 'utf-8'))
-      : [];
+  async listarTodos({ page = 1, limit = 10 } = {}) {
+    const skip = (page - 1) * limit;
+    const total = await Pedido.countDocuments();
+    const pedidos = await Pedido.find()
+      .populate('usuario', 'nome email')
+      .populate('itens.produto', 'nome preco img')
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
+
+    return { pedidos, total, page, totalPages: Math.ceil(total / limit) };
   }
 
-  salvarJSON() {
-    fs.writeFileSync(ARQUIVO, JSON.stringify(this.pedidos, null, 2), 'utf-8');
-  }
-
-  listaTodosOsPedidos() {
-    return this.pedidos;
-  }
-
-  limparTodosOsPedidos() {
-    this.pedidos = [];
-    this.salvarJSON();
-  }
-
-  criar(dadosProduto, quantidade, endereco, frete) {
-    const produtoService = new ProdutoService();
-    const produtoReal = produtoService.buscarPorId(dadosProduto.id);
-
-    if (produtoReal.quantidade < quantidade) {
-      throw new Error(
-        `Estoque insuficiente. Disponível: ${produtoReal.quantidade}`,
-      );
-    }
-
-    const itens = [{ produto: produtoReal, quantidade }];
-    const pedido = new Pedido(itens, endereco, frete); // ← passa para o model
-
-    produtoReal.quantidade -= quantidade;
-    produtoService.salvarJSON();
-
-    this.pedidos.push(pedido);
-    this.salvarJSON();
+  async buscarPorId(id) {
+    const pedido = await Pedido.findById(id)
+      .populate('usuario', 'nome email')
+      .populate('itens.produto', 'nome preco img');
+    if (!pedido) throw new Error('Pedido não encontrado');
     return pedido;
   }
 
-  buscarPorId(id) {
-    return this.pedidos.find((p) => p.id === id);
+  async criar({ usuarioId, produto, quantidade, endereco, frete }) {
+    const produtoReal = await Produto.findById(produto.id || produto._id);
+    if (!produtoReal) throw new Error('Produto não encontrado');
+    if (produtoReal.quantidade < quantidade) {
+      throw new Error(`Estoque insuficiente. Disponível: ${produtoReal.quantidade}`);
+    }
+
+    const itens = [{ produto: produtoReal._id, quantidade, precoUnitario: produtoReal.preco }];
+    const subtotal = produtoReal.preco * quantidade;
+    const total = subtotal + (frete || 0);
+
+    const pedido = await Pedido.create({
+      usuario: usuarioId,
+      itens,
+      endereco,
+      frete: frete || 0,
+      total,
+    });
+
+    produtoReal.quantidade -= quantidade;
+    await produtoReal.save();
+
+    return pedido.populate('itens.produto', 'nome preco img');
   }
 
-  deletar(id) {
-    const index = this.pedidos.findIndex((p) => p.id === id);
+  async atualizarStatus(id, status) {
+    const statusValidos = ['pendente', 'enviado', 'entregue', 'cancelado'];
+    if (!statusValidos.includes(status)) throw new Error('Status inválido');
 
-    if (index === -1) {
-      throw new Error('Pedido não encontrado');
-    }
-
-    const removido = this.pedidos.splice(index, 1)[0];
-    this.salvarJSON();
-
-    return removido;
+    const pedido = await Pedido.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true }
+    ).populate('itens.produto', 'nome preco img');
+    if (!pedido) throw new Error('Pedido não encontrado');
+    return pedido;
   }
 
-  atualizar(id, dados) {
-    const pedido = this.buscarPorId(id);
-
-    if (!pedido) {
-      throw new Error('Pedido não encontrado');
-    }
-
-    if (dados.status) {
-      pedido.status = dados.status;
-    }
-
-    this.salvarJSON();
-
+  async deletar(id) {
+    const pedido = await Pedido.findByIdAndDelete(id);
+    if (!pedido) throw new Error('Pedido não encontrado');
     return pedido;
   }
 }

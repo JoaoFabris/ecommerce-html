@@ -1,80 +1,43 @@
 const Produto = require('../models/Produto');
 
-const fs = require('fs');
-const path = require('path');
-
-const ARQUIVO = path.join(__dirname, '../data/produtos.json');
-
 class ProdutoService {
-  constructor() {
-    //está usando persistência em arquivo (produtos.json),
-    if (fs.existsSync(ARQUIVO)) {
-      const data = fs.readFileSync(ARQUIVO, 'utf-8');
-      this.produtos = JSON.parse(data);
-    } else {
-      this.produtos = [];
-    }
+  async listarTodos({ page = 1, limit = 10 } = {}) {
+    const skip = (page - 1) * limit;
+    const total = await Produto.countDocuments();
+    const produtos = await Produto.find()
+      .populate('categoria', 'nome')
+      .skip(skip)
+      .limit(limit);
+
+    return { produtos, total, page, totalPages: Math.ceil(total / limit) };
   }
 
-  limparBanco() {
-    this.produtos = [];
-    this.salvarJSON();
-  }
-  salvarJSON() {
-    fs.writeFileSync(ARQUIVO, JSON.stringify(this.produtos, null, 2), 'utf8');
-  }
-
-  listarTodos() {
-    return this.produtos;
-  }
-
-  buscarPorId(id) {
-    return this.produtos.find((p) => p.id === id);
-  }
-
-  calcularMediaPreco() {
-    if (this.produtos.length === 0) return 0;
-    const sum = this.produtos.reduce((acc, curr) => curr.preco + acc, 0);
-    return (sum / this.produtos.length).toFixed(2);
-  }
-
-  criar(nome, preco, categoria, quantidade, img) {
-    const produto = new Produto(nome, preco, categoria, quantidade, img);
-    this.produtos.push(produto);
-    this.salvarJSON();
+  async buscarPorId(id) {
+    const produto = await Produto.findById(id).populate('categoria', 'nome');
+    if (!produto) throw new Error('Produto não encontrado');
     return produto;
   }
 
-  atualizarProduto(id, nome, preco, categoria, quantidade, img) {
-    const index = this.produtos.findIndex((p) => p.id === id);
-
-    if (index === -1) {
-      throw new Error('Produto não encontrado');
-    }
-
-    const produto = this.produtos[index];
-    const produtoAtualizar = {
-      ...produto,
-      nome: nome || produto.nome,
-      preco: preco || produto.preco,
-      quantidade: quantidade || produto.quantidade,
-      categoria: categoria || produto.categoria,
-      img: img || produto.img,
-    };
-    this.produtos[index] = produtoAtualizar;
-    this.salvarJSON();
+  async criar({ nome, preco, categoria, quantidade, img }) {
+    return Produto.create({ nome, preco, categoria, quantidade, img });
   }
 
-  deletar(id) {
-    const index = this.produtos.findIndex((p) => p.id === id);
+  async atualizar(id, { nome, preco, categoria, quantidade, img }) {
+    const produto = await Produto.findByIdAndUpdate(
+      id,
+      { nome, preco, categoria, quantidade, img },
+      { new: true, runValidators: true }
+    ).populate('categoria', 'nome'); // O populate serve para fazer um "join" (união) entre coleções no MongoDB usando o Mongoose. 
+    // O Mongoose vai até a coleção de categorias, busca quem tem aquele ID e traz os dados de lá.
+    // similar to a SQL JOIN operation
+    if (!produto) throw new Error('Produto não encontrado');
+    return produto;
+  }
 
-    if (index === -1) {
-      throw new Error('Produto não encontrado');
-    }
-
-    const removido = this.produtos.splice(index, 1)[0];
-    this.salvarJSON();
-    return removido;
+  async deletar(id) {
+    const produto = await Produto.findByIdAndDelete(id);
+    if (!produto) throw new Error('Produto não encontrado');
+    return produto;
   }
 }
 

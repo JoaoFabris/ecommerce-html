@@ -1,77 +1,58 @@
 //recebe a req e retorna o status code
-
 const PedidoService = require('../services/pedidoService');
+const service = new PedidoService();
 
-function listar(req, res) {
+async function listar(req, res) {
   try {
-    const service = new PedidoService();
-    const pedidos = service.listaTodosOsPedidos();
-    res.json(pedidos);
+    const { page, limit } = req.query;
+    const resultado = await service.listarTodos({ page: Number(page), limit: Number(limit) });
+    res.json(resultado);
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
 }
 
-function buscarPorId(req, res) {
+async function buscarPorId(req, res) {
   try {
-    const service = new PedidoService();
-    const pedido = service.buscarPorId(req.params.id);
-
-    if (!pedido) {
-      return res.status(404).json({ error: 'Pedido não encontrado' });
-    }
-
+    const pedido = await service.buscarPorId(req.params.id);
     res.json(pedido);
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    res.status(404).json({ error: e.message });
   }
 }
 
-function criar(req, res) {
+async function criar(req, res) {
   try {
     const { produto, quantidade, endereco, frete } = req.body;
-
-    if (!produto || !quantidade) {
-      return res.status(400).json({
-        error: 'Produto e quantidade são obrigatórios'
-      });
-    }
-
-    const service = new PedidoService();
-    const pedido = service.criar(produto, quantidade, endereco, frete);
-
+    const pedido = await service.criar({
+      usuarioId: req.user.id,
+      produto,
+      quantidade,
+      endereco,
+      frete,
+    });
     res.status(201).json(pedido);
   } catch (e) {
     res.status(400).json({ error: e.message });
   }
 }
 
-function atualizar(req, res) {
+async function atualizarStatus(req, res) {
   try {
-    const service = new PedidoService();
-    const pedidoAtualizado = service.atualizar(req.params.id, req.body);
-
-    res.json(pedidoAtualizado);
+    const pedido = await service.atualizarStatus(req.params.id, req.body.status);
+    res.json(pedido);
   } catch (e) {
     res.status(400).json({ error: e.message });
   }
 }
 
-function deletar(req, res) {
+async function deletar(req, res) {
   try {
-    const service = new PedidoService();
-    service.deletar(req.params.id);
-
+    await service.deletar(req.params.id);
     res.json({ mensagem: 'Pedido removido com sucesso' });
   } catch (e) {
     res.status(400).json({ error: e.message });
   }
 }
 
-module.exports = {
-  listar,
-  buscarPorId,
-  criar,
-  atualizar,
-  deletar
-};
+module.exports = { listar, buscarPorId, criar, atualizarStatus, deletar };
