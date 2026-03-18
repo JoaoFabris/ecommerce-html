@@ -1,5 +1,4 @@
-const Pedido = require('../models/Pedido');
-const Produto = require('../models/Produto');
+const Pedido = require('../models/PedidoService'); 
 const fs = require('fs');
 const path = require('path');
 const ProdutoService = require('./produtoService');
