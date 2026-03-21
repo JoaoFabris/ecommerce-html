@@ -2,18 +2,17 @@ const Pedido = require('../models/Pedido');
 const Produto = require('../models/Produto');
 
 class PedidoService {
-  async listarTodos({ page = 1, limit = 10 } = {}) {
-    const skip = (page - 1) * limit;
-    const total = await Pedido.countDocuments();
-    const pedidos = await Pedido.find()
-      .populate('usuario', 'nome email')
-      .populate('itens.produto', 'nome preco img')
-      .skip(skip)
-      .limit(limit)
-      .sort({ createdAt: -1 });
+  async listarTodos({ page = 1, limit = 10, skip = 0 } = {}) {
+  const total = await Pedido.countDocuments();
+  const pedidos = await Pedido.find()
+    .populate('usuario', 'nome email')
+    .populate('itens.produto', 'nome preco img')
+    .skip(skip)
+    .limit(limit)
+    .sort({ createdAt: -1 });
 
-    return { pedidos, total, page, totalPages: Math.ceil(total / limit) };
-  }
+  return { pedidos, total, page, totalPages: Math.ceil(total / limit) };
+}
 
   async buscarPorId(id) {
     const pedido = await Pedido.findById(id)
