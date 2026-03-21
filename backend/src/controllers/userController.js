@@ -30,16 +30,62 @@ async function listar(req, res) {
 
 async function deletar(req, res) {
   try {
-    const deletetedUser = await service.deletar(req.params.id);
-    await service.deletar(deletetedUser);
-    if (deletetedUser === null) {
-      res.status(404).send({ mensagem: 'Usuário não encontrado' });
-    } else {
-      res.status(200)({ mensagem: 'Usuário deletado' });
-    }
+    await service.deletar(req.params.id);
+    res.json({ mensagem: 'Usuário removido com sucesso' });
   } catch (e) {
     res.status(400).json({ error: e.message });
   }
 }
 
-module.exports = { registrar, login, listar, deletar };
+async function atualizar(req, res) {
+  try {
+    const user = await service.atualizar(req.params.id, req.body);
+    res.json(user);
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+}
+
+async function adicionarFavorito(req, res) {
+  try {
+    const user = await service.adicionarFavorito(
+      req.user.id,
+      req.params.produtoId,
+    );
+    res.json(user);
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+}
+
+async function removerFavorito(req, res) {
+  try {
+    const user = await service.removerFavorito(
+      req.user.id,
+      req.params.produtoId,
+    );
+    res.json(user);
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+}
+
+async function listarFavoritos(req, res) {
+  try {
+    const favoritos = await service.listarFavoritos(req.user.id);
+    res.json(favoritos);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+}
+
+module.exports = {
+  registrar,
+  login,
+  listar,
+  atualizar,
+  deletar,
+  adicionarFavorito,
+  removerFavorito,
+  listarFavoritos,
+};
