@@ -1,16 +1,15 @@
 const Produto = require('../models/Produto');
 
 class ProdutoService {
-  async listarTodos({ page = 1, limit = 10 } = {}) {
-    const skip = (page - 1) * limit;
-    const total = await Produto.countDocuments();
-    const produtos = await Produto.find()
-      .populate('categoria', 'nome')
-      .skip(skip)
-      .limit(limit);
+ async listarTodos({ page = 1, limit = 10, skip = 0 } = {}) {
+  const total = await Produto.countDocuments();
+  const produtos = await Produto.find()
+    .populate('categoria', 'nome')
+    .skip(skip)
+    .limit(limit);
 
-    return { produtos, total, page, totalPages: Math.ceil(total / limit) };
-  }
+  return { produtos, total, page, totalPages: Math.ceil(total / limit) };
+}
 
   async buscarPorId(id) {
     const produto = await Produto.findById(id).populate('categoria', 'nome');

@@ -5,8 +5,7 @@ const service = new ProdutoService();
 
 async function listar(req, res) {
   try {
-    const { page, limit } = req.query;
-    const resultado = await service.listarTodos({ page: Number(page), limit: Number(limit) });
+    const resultado = await service.listarTodos(req.paginacao);
     res.json(resultado);
   } catch (e) {
     res.status(500).json({ error: e.message });
