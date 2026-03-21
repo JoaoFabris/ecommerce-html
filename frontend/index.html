@@ -5,12 +5,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sistema de Gestão de Vendas</title>
     <link rel="stylesheet" href="style.css" />
+    <style>
+      .user-bar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 12px;
+        flex-wrap: wrap;
+      }
+      .user-bar span {
+        color: #f3d0da;
+        font-size: 0.95rem;
+      }
+      .user-bar .badge-admin {
+        background: #fff;
+        color: #70273c;
+        font-size: 0.75rem;
+        font-weight: bold;
+        padding: 2px 8px;
+        border-radius: 20px;
+      }
+      #btnLogout {
+        background: transparent;
+        border: 2px solid #fff;
+        color: #fff;
+        padding: 0.4rem 1rem;
+        font-size: 0.85rem;
+        border-radius: 20px;
+        box-shadow: none;
+      }
+      #btnLogout:hover {
+        background: #fff;
+        color: #70273c;
+        transform: translateY(-1px);
+      }
+      /* Esconde seção admin para usuários comuns */
+      .admin-only { display: none; }
+    </style>
   </head>
   <body>
     <header>
       <h1>Sistema de Gestão de Vendas</h1>
       <p>Organize seus pedidos e calcule vendas facilmente.</p>
-      <button id="btnVerPedidos">Ver os Pedidos</button>
+      <div class="user-bar">
+        <span id="nomeUsuario">Carregando...</span>
+        <span id="badgeAdmin" class="badge-admin" style="display:none">ADMIN</span>
+        <button id="btnVerPedidos">Ver os Pedidos</button>
+        <button id="btnLogout">Sair</button>
+      </div>
     </header>
 
     <main>
@@ -19,15 +62,16 @@
         <div id="listaDosPedidos"></div>
       </section>
 
-      <section>
+      <!-- Seção visível apenas para admin -->
+      <section id="secCadastro" class="admin-only">
         <h2>Cadastro de Produto</h2>
-
         <input type="text" id="produtoNome" placeholder="Nome do produto" />
         <input type="number" id="produtoPreco" placeholder="Preço" />
-        <input type="text" id="produtoCategoria" placeholder="Categoria" />
+        <select id="produtoCategoria">
+          <option value="">Selecione uma categoria</option>
+        </select>
         <input type="number" id="produtoQuantidade" placeholder="Quantidade" />
         <input type="text" id="produtoImg" placeholder="Caminho da imagem assets/exe.png" />
-
         <button id="btnCadastrarProduto">Cadastrar Produto</button>
       </section>
 
@@ -38,28 +82,20 @@
 
       <section>
         <h2>Calculadora de Desconto</h2>
-
         <p id="produtoSelecionadoInfo"></p>
-
         <label for="valor">Valor do Produto</label>
         <input type="number" id="valor" readonly />
-
         <label for="desconto">Desconto (%)</label>
         <input type="number" id="desconto" placeholder="Digite o desconto" />
-
         <button id="btnCalcular">Calcular</button>
-
         <p id="resultado"></p>
       </section>
 
       <section>
         <h2>Buscar Endereço por CEP</h2>
-
         <label for="cep">CEP</label>
         <input type="text" id="cep" placeholder="Digite o CEP" />
-
         <button id="btnBuscar">Buscar</button>
-
         <pre id="resultadoCep"></pre>
       </section>
 

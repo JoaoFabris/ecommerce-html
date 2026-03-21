@@ -9,6 +9,9 @@ const cors = require('cors');
 const conectarDB = require('./backend/src/config/db');
 // Importa e executa a função de conexão com o MongoDB Atlas assim que o servidor sobe. O db.js usa o process.env.MONGO_URI que foi carregado pelo dotenv.
 
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./backend/src/docs/swagger');
+
 const produtoRoutes = require('./backend/src/routes/produtoRoutes');
 const pedidoRoutes = require('./backend/src/routes/pedidoRoutes');
 const userRoutes = require('./backend/src/routes/userRoutes');
@@ -27,6 +30,8 @@ app.use(express.static(path.join(__dirname, 'frontend')));
 app.get('/api', (req, res) => {
   res.json({ mensagem: 'Servidor funcionando!' });
 });
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use('/api/produtos', produtoRoutes);
 app.use('/api/pedidos', pedidoRoutes);

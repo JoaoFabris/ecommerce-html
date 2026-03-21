@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login — Sistema de Gestão de Vendas</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .login-wrapper { min-height: 100vh; display: flex; flex-direction: column; }
+      .login-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; }
+      .login-box { background: white; border-radius: 12px; padding: 2.5rem 2rem; width: 100%; max-width: 420px; box-shadow: 0 4px 24px rgba(112,39,60,0.15); border-top: 4px solid #70273c; }
+      .login-box h2 { color: #70273c; font-size: 1.6rem; margin-bottom: 0.25rem; }
+      .login-box p.subtitulo { color: #888; font-size: 0.95rem; margin-bottom: 1.5rem; }
+      .tabs { display: flex; margin-bottom: 1.5rem; border-bottom: 2px solid #eee; }
+      .tab { flex: 1; padding: 0.6rem; background: none; border: none; box-shadow: none; color: #aaa; font-size: 1rem; font-weight: bold; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: color 0.2s, border-color 0.2s; transform: none !important; }
+      .tab.ativo { color: #70273c; border-bottom-color: #70273c; }
+      .form-group { display: flex; flex-direction: column; gap: 0.25rem; margin-bottom: 1rem; }
+      .form-group label { font-size: 0.85rem; font-weight: bold; color: #555; }
+      .form-group input { width: 100%; max-width: 100%; margin-bottom: 0; }
+      .btn-login { width: 100%; padding: 0.85rem; font-size: 1rem; margin-top: 0.5rem; }
+      .msg-erro { color: #c0392b; font-size: 0.88rem; background: #fde8e8; padding: 0.6rem 0.8rem; border-radius: 6px; margin-bottom: 1rem; display: none; }
+      .msg-sucesso { color: #2e7d32; font-size: 0.88rem; background: #e8f5e9; padding: 0.6rem 0.8rem; border-radius: 6px; margin-bottom: 1rem; display: none; }
+      .form-panel { display: none; }
+      .form-panel.ativo { display: block; }
+    </style>
+  </head>
+  <body class="login-wrapper">
+    <header>
+      <h1>Sistema de Gestão de Vendas</h1>
+      <p>Faça login para continuar.</p>
+    </header>
+
+    <div class="login-container">
+      <div class="login-box">
+        <h2>Bem-vindo!</h2>
+        <p class="subtitulo">Acesse sua conta ou crie uma nova.</p>
+
+        <div class="tabs">
+          <button class="tab ativo" id="tabLogin" onclick="mostrarTab('login')">Entrar</button>
+          <button class="tab" id="tabRegistro" onclick="mostrarTab('registro')">Criar conta</button>
+        </div>
+
+        <div id="msgErro" class="msg-erro"></div>
+        <div id="msgSucesso" class="msg-sucesso"></div>
+
+        <div id="formLogin" class="form-panel ativo">
+          <div class="form-group">
+            <label for="loginEmail">E-mail</label>
+            <input type="email" id="loginEmail" placeholder="seu@email.com" />
+          </div>
+          <div class="form-group">
+            <label for="loginSenha">Senha</label>
+            <input type="password" id="loginSenha" placeholder="••••••" />
+          </div>
+          <button class="btn-login" onclick="fazerLogin()">Entrar</button>
+        </div>
+
+        <div id="formRegistro" class="form-panel">
+          <div class="form-group">
+            <label for="regNome">Nome completo</label>
+            <input type="text" id="regNome" placeholder="João Silva" />
+          </div>
+          <div class="form-group">
+            <label for="regEmail">E-mail</label>
+            <input type="email" id="regEmail" placeholder="seu@email.com" />
+          </div>
+          <div class="form-group">
+            <label for="regSenha">Senha</label>
+            <input type="password" id="regSenha" placeholder="Mínimo 6 caracteres" />
+          </div>
+          <button class="btn-login" onclick="fazerRegistro()">Criar conta</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      if (localStorage.getItem('token')) window.location.href = '/index.html';
+
+      function mostrarTab(tab) {
+        document.getElementById('formLogin').classList.toggle('ativo', tab === 'login');
+        document.getElementById('formRegistro').classList.toggle('ativo', tab === 'registro');
+        document.getElementById('tabLogin').classList.toggle('ativo', tab === 'login');
+        document.getElementById('tabRegistro').classList.toggle('ativo', tab === 'registro');
+        esconderMensagens();
+      }
+
+      function mostrarErro(msg) {
+        const el = document.getElementById('msgErro');
+        el.textContent = msg; el.style.display = 'block';
+        document.getElementById('msgSucesso').style.display = 'none';
+      }
+
+      function mostrarSucesso(msg) {
+        const el = document.getElementById('msgSucesso');
+        el.textContent = msg; el.style.display = 'block';
+        document.getElementById('msgErro').style.display = 'none';
+      }
+
+      function esconderMensagens() {
+        document.getElementById('msgErro').style.display = 'none';
+        document.getElementById('msgSucesso').style.display = 'none';
+      }
+
+      async function fazerLogin() {
+        const email = document.getElementById('loginEmail').value.trim();
+        const senha = document.getElementById('loginSenha').value;
+        if (!email || !senha) { mostrarErro('Preencha e-mail e senha.'); return; }
+        try {
+          const res = await fetch('/api/users/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, senha }),
+          });
+          const data = await res.json();
+          if (!res.ok) { mostrarErro(data.error || 'Erro ao fazer login.'); return; }
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('role', data.role);
+          localStorage.setItem('nome', data.nome);
+          localStorage.setItem('userId', data.id);
+          if (data.role === 'admin') localStorage.setItem('token_admin', data.token);
+          mostrarSucesso('Login realizado! Redirecionando...');
+          setTimeout(() => window.location.href = '/index.html', 1000);
+        } catch (e) { mostrarErro('Erro ao conectar com o servidor.'); }
+      }
+
+      async function fazerRegistro() {
+        const nome = document.getElementById('regNome').value.trim();
+        const email = document.getElementById('regEmail').value.trim();
+        const senha = document.getElementById('regSenha').value;
+        if (!nome || !email || !senha) { mostrarErro('Preencha todos os campos.'); return; }
+        if (senha.length < 6) { mostrarErro('Senha deve ter no mínimo 6 caracteres.'); return; }
+        try {
+          const res = await fetch('/api/users/registrar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nome, email, senha }),
+          });
+          const data = await res.json();
+          if (!res.ok) { mostrarErro(data.error || 'Erro ao criar conta.'); return; }
+          mostrarSucesso('Conta criada! Faça login para continuar.');
+          setTimeout(() => mostrarTab('login'), 1500);
+        } catch (e) { mostrarErro('Erro ao conectar com o servidor.'); }
+      }
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter') return;
+        document.getElementById('formLogin').classList.contains('ativo') ? fazerLogin() : fazerRegistro();
+      });
+    </script>
+  </body>
+</html>
